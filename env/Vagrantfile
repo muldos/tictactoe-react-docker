@@ -1,0 +1,23 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+
+  config.vm.provider :virtualbox do |vb|
+	vb.memory = 2048
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  end
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.network "public_network", ip: "192.168.0.42"
+  config.vm.synced_folder "../shared/", "/home/vagrant/shared"
+  # auto install docker
+  config.vm.provision :docker
+  # necessite vagrant plugin install vagrant-docker-compose
+  config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always", rebuild: true, command_options: { rm: "--force", up: "-d --remove-orphans" }
+ 
+end
+ 
